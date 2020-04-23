@@ -6,12 +6,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.github.sourcegroove.jackson.module.DateBuilder;
 import com.github.sourcegroove.jackson.module.DateRepresentationType;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-@Slf4j
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
     private DateRepresentationType type;
     public LocalDateTimeDeserializer(DateRepresentationType type){

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.LocalDate;
 
-@Slf4j
 public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
     private DateRepresentationType type;
     public LocalDateDeserializer(DateRepresentationType type){
