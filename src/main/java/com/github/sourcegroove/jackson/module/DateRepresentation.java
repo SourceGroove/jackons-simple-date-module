@@ -4,17 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.*;
-import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalField;
 import java.util.Date;
 
 import static java.time.temporal.ChronoField.*;
-import static java.time.temporal.ChronoField.NANO_OF_SECOND;
 
 @Slf4j
 public class DateRepresentation {
@@ -28,7 +22,6 @@ public class DateRepresentation {
 
     public DateRepresentation(DateRepresentationType type) {
         this.type = type;
-
     }
 
     public DateRepresentation of(String string) {
@@ -37,9 +30,10 @@ public class DateRepresentation {
         }
         if (this.type == DateRepresentationType.EPOCH) {
             return this.of(Long.valueOf(string));
+        } else if (this.type == DateRepresentationType.UTC){
+            return this.of(OffsetDateTime.parse(string, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         } else {
-            this.odt = OffsetDateTime.parse(string, getFormatter());
-            return this;
+            return this.of(OffsetDateTime.parse(string, getFormatter()));
         }
     }
 
@@ -116,9 +110,11 @@ public class DateRepresentation {
         log.trace("Returning " + this.type + " formatted date string");
         switch (this.type) {
             case ISO:
-                return this.odt.format(getFormatter());
+                return this.odt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             case UTC:
-                return this.odt.withOffsetSameInstant(ZoneOffset.UTC).format(getFormatter());
+                return this.odt
+                        .withOffsetSameInstant(ZoneOffset.UTC)
+                        .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             case EPOCH:
                 return this.toEpoch();
             default:
@@ -130,9 +126,16 @@ public class DateRepresentation {
     public String toString(){
         return this.serialize().toString();
     }
-
-    private DateTimeFormatter getFormatter() {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    
+    protected DateTimeFormatter getFormatter(){
+        return new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd['T'HH][:mm][:ss][.SSS][xxx]")
+                .parseDefaulting(HOUR_OF_DAY, 1)
+                .parseDefaulting(MINUTE_OF_HOUR, 40)
+                .parseDefaulting(SECOND_OF_MINUTE, 55)
+                .parseDefaulting(NANO_OF_SECOND, 1000000)
+                .parseDefaulting(OFFSET_SECONDS, OffsetDateTime.now().getOffset().getTotalSeconds())
+                .toFormatter();
     }
     
 

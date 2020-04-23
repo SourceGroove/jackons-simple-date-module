@@ -7,11 +7,37 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static org.junit.Assert.assertNotNull;
 
 
 public class DateRepresentationTest {
 
+    @Test()
+    public void testFormatter(){
+        DateTimeFormatter fmt = new DateRepresentation().getFormatter();
+        assertNotNull(fmt.parse("2020-04-23"));
+        assertNotNull(fmt.parse("2020-04-23T01:02:03"));
+        assertNotNull(fmt.parse("2020-04-23T01:02:03.123"));
+        assertNotNull(LocalDateTime.parse("2020-04-23T01:02", fmt));
+        assertNotNull(OffsetDateTime.parse("2020-04-23", fmt));
+    }
+    
+    @Test()
+    public void testParsePartialIsoFormats(){
+        assertNotNull(new DateRepresentation().of("2020-04-23"));
+        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29"));
+        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29.532-04:00"));
+        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29-04:00"));
+    }
+    
+    @Test
+    public void testParsePartialUtcFormats(){
+        assertNotNull(new DateRepresentation(DateRepresentationType.UTC).of("2020-04-23T15:58:29.053Z"));
+        //assertNotNull(new DateRepresentation(DateRepresentationType.UTC).of("2020-04-23T11:56:29"));
+    }
     @Test()
     public void testToIsoString() {
         System.out.println("Epoch: " + new DateRepresentation().of(new Date().getTime()).toString());
@@ -33,6 +59,16 @@ public class DateRepresentationTest {
         System.out.println("OffsetDateTime: " + new DateRepresentation().of(str).toOffsetDateTime());
     }
 
+    @Test()
+    public void testFromPartialIsoString() {
+        String str = "2020-04-23";
+        System.out.println("Epoch: " + new DateRepresentation().of(str).toEpoch());
+        System.out.println("Date: " + new DateRepresentation().of(str).toDate());
+        System.out.println("LocalDate: " + new DateRepresentation().of(str).toLocalDate());
+        System.out.println("LocalDateTime: " + new DateRepresentation().of(str).toLocalDateTime());
+        System.out.println("ZonedDateTime: " + new DateRepresentation().of(str).toZonedDateTime());
+        System.out.println("OffsetDateTime: " + new DateRepresentation().of(str).toOffsetDateTime());
+    }
     @Test()
     public void testToUtcString() {
         System.out.println("Epoch: " + new DateRepresentation(DateRepresentationType.UTC).of(new Date().getTime()).toString());
