@@ -1,41 +1,49 @@
 package com.github.sourcegroove.jackson.module;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.*;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalField;
 import java.util.Date;
 
-public class DateBuilder {
+import static java.time.temporal.ChronoField.*;
+import static java.time.temporal.ChronoField.NANO_OF_SECOND;
+
+@Slf4j
+public class DateRepresentation {
 
     private DateRepresentationType type;
     private OffsetDateTime odt;
 
-    public DateBuilder() {
+    public DateRepresentation() {
         this.type = DateRepresentationType.ISO;
     }
 
-    public DateBuilder(DateRepresentationType type) {
+    public DateRepresentation(DateRepresentationType type) {
         this.type = type;
 
     }
 
-    public DateBuilder from(String string) {
-        if(StringUtils.isBlank(string)){
+    public DateRepresentation of(String string) {
+        if (StringUtils.isBlank(string)) {
             return this;
         }
         if (this.type == DateRepresentationType.EPOCH) {
-            return this.from(Long.valueOf(string));
+            return this.of(Long.valueOf(string));
         } else {
             this.odt = OffsetDateTime.parse(string, getFormatter());
             return this;
         }
     }
 
-    public DateBuilder from(Long date) {
+    public DateRepresentation of(Long date) {
         Instant i = Instant.ofEpochMilli(date);
         this.odt = i.atOffset(ZoneOffset
                 .systemDefault()
@@ -44,7 +52,7 @@ public class DateBuilder {
         return this;
     }
 
-    public DateBuilder from(Date date) {
+    public DateRepresentation of(Date date) {
         this.odt = date.toInstant()
                 .atOffset(ZoneOffset
                         .systemDefault()
@@ -53,11 +61,11 @@ public class DateBuilder {
         return this;
     }
 
-    public DateBuilder from(LocalDate date) {
-        return this.from(date.atStartOfDay());
+    public DateRepresentation of(LocalDate date) {
+        return this.of(date.atStartOfDay());
     }
 
-    public DateBuilder from(LocalDateTime date) {
+    public DateRepresentation of(LocalDateTime date) {
         this.odt = date.atOffset(ZoneOffset
                 .systemDefault()
                 .getRules()
@@ -65,13 +73,13 @@ public class DateBuilder {
         return this;
     }
 
-    public DateBuilder from(ZonedDateTime date) {
+    public DateRepresentation of(ZonedDateTime date) {
         this.odt = date.withZoneSameInstant(ZoneOffset.systemDefault())
                 .toOffsetDateTime();
         return this;
     }
 
-    public DateBuilder from(OffsetDateTime date) {
+    public DateRepresentation of(OffsetDateTime date) {
         this.odt = date;
         return this;
     }
@@ -100,55 +108,32 @@ public class DateBuilder {
         return this.odt.toInstant().toEpochMilli();
     }
 
-    public String toString() {
+    public Object serialize() {
         if (this.odt == null) {
             return null;
         }
 
+        log.trace("Returning " + this.type + " formatted date string");
         switch (this.type) {
             case ISO:
-                return toIsoString();
+                return this.odt.format(getFormatter());
             case UTC:
-                return toUtcString();
+                return this.odt.withOffsetSameInstant(ZoneOffset.UTC).format(getFormatter());
             case EPOCH:
-                return toEpochString();
+                return this.toEpoch();
             default:
-                throw new IllegalArgumentException("Unsupported date type");
+                log.error("Unsupported date representation type");
+                throw new IllegalArgumentException("Unsupported date representation type");
         }
     }
-
-
-    private String toIsoString() {
-        return this.odt.format(getFormatter());
-    }
-
-    private String toUtcString() {
-        return this.odt
-                .withOffsetSameInstant(ZoneOffset.UTC)
-                .format(getFormatter());
-    }
-
-    private String toEpochString() {
-        return this.toEpoch().toString();
+    
+    public String toString(){
+        return this.serialize().toString();
     }
 
     private DateTimeFormatter getFormatter() {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     }
+    
 
-    private DateTimeFormatter getForgivingFormatter() {
-        return new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd")
-                .optionalStart()
-                .appendPattern("HH:mm:ss.SSS'Z'")
-                .optionalEnd()
-                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
-                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
-                .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
-                .parseDefaulting(ChronoField.OFFSET_SECONDS, 0)
-                .toFormatter()
-                .withResolverStyle(ResolverStyle.SMART)
-                .withZone(ZoneId.systemDefault());
-    }
 }

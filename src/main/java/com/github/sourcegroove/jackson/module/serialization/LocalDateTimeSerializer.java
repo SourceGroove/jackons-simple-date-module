@@ -3,7 +3,7 @@ package com.github.sourcegroove.jackson.module.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.github.sourcegroove.jackson.module.DateBuilder;
+import com.github.sourcegroove.jackson.module.DateRepresentation;
 import com.github.sourcegroove.jackson.module.DateRepresentationType;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     @Override
     public void serialize(LocalDateTime value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         if(value != null) {
-            jsonGenerator.writeObject(new DateBuilder(this.type).from(value).toString());
+            jsonGenerator.writeObject(new DateRepresentation(this.type).of(value).serialize());
         }
     }
 }
