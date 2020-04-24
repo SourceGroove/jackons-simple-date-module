@@ -103,6 +103,9 @@ public class DateRepresentation {
         return this.odt.toInstant().toEpochMilli();
     }
 
+    public String toString(){
+        return this.serialize().toString();
+    }
     public Object serialize() {
         if (this.odt == null) {
             return null;
@@ -124,9 +127,7 @@ public class DateRepresentation {
         }
     }
     
-    public String toString(){
-        return this.serialize().toString();
-    }
+    
     
     protected DateTimeFormatter getFormatter(){
         return new DateTimeFormatterBuilder()
@@ -135,7 +136,7 @@ public class DateRepresentation {
                 .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)//[.SSS]
                 .optionalEnd()
                 .optionalStart()
-                .appendPattern("[xxx]")
+                .appendOffset("+HH:MM","Z")
                 .optionalEnd()
                 .parseDefaulting(HOUR_OF_DAY, 1)
                 .parseDefaulting(MINUTE_OF_HOUR, 40)
