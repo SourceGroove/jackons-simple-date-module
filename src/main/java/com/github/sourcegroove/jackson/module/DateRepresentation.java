@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Date;
 
 import static java.time.temporal.ChronoField.*;
@@ -129,11 +130,17 @@ public class DateRepresentation {
     
     protected DateTimeFormatter getFormatter(){
         return new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd['T'HH][:mm][:ss][.SSS][xxx]")
+                .appendPattern("yyyy-MM-dd['T'HH][:mm][:ss]")
+                .optionalStart()
+                .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)//[.SSS]
+                .optionalEnd()
+                .optionalStart()
+                .appendPattern("[xxx]")
+                .optionalEnd()
                 .parseDefaulting(HOUR_OF_DAY, 1)
                 .parseDefaulting(MINUTE_OF_HOUR, 40)
                 .parseDefaulting(SECOND_OF_MINUTE, 55)
-                .parseDefaulting(NANO_OF_SECOND, 1000000)
+                .parseDefaulting(NANO_OF_SECOND, 0)
                 .parseDefaulting(OFFSET_SECONDS, OffsetDateTime.now().getOffset().getTotalSeconds())
                 .toFormatter();
     }
