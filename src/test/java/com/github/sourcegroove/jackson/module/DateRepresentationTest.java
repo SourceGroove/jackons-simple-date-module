@@ -15,6 +15,22 @@ import static org.junit.Assert.assertNotNull;
 public class DateRepresentationTest {
 
     @Test()
+    public void testNullPointers(){
+        new DateRepresentation(DateRepresentationType.ISO).of("").toDate();
+        new DateRepresentation(DateRepresentationType.ISO).of("").toLocalDate();
+        new DateRepresentation(DateRepresentationType.ISO).of("").toLocalDateTime();
+        new DateRepresentation(DateRepresentationType.ISO).of("").toOffsetDateTime();
+        new DateRepresentation(DateRepresentationType.UTC).of("").toDate();
+        new DateRepresentation(DateRepresentationType.UTC).of("").toLocalDate();
+        new DateRepresentation(DateRepresentationType.UTC).of("").toLocalDateTime();
+        new DateRepresentation(DateRepresentationType.UTC).of("").toOffsetDateTime();
+        new DateRepresentation(DateRepresentationType.EPOCH).of("").toDate();
+        new DateRepresentation(DateRepresentationType.EPOCH).of("").toLocalDate();
+        new DateRepresentation(DateRepresentationType.EPOCH).of("").toLocalDateTime();
+        new DateRepresentation(DateRepresentationType.EPOCH).of("").toOffsetDateTime();
+    }
+    
+    @Test()
     public void testOfIsoString(){
         assertOfString(DateRepresentationType.ISO, "2020-04-23");
         assertOfString(DateRepresentationType.ISO, "2020-04-23T11:56:29");
@@ -24,8 +40,6 @@ public class DateRepresentationTest {
         assertOfString(DateRepresentationType.ISO, "2020-04-23T11:56:29.3Z");
         assertOfString(DateRepresentationType.ISO, "2020-04-23T11:56:29.123Z");
     }
-    
-    
     
     @Test()
     public void testParsePartialIsoFormats(){

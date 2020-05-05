@@ -79,28 +79,28 @@ public class DateRepresentation {
         return this;
     }
 
-    public Date toDate() {
-        return Date.from(this.odt.toInstant());
-    }
-
-    public LocalDate toLocalDate() {
-        return this.odt.toLocalDate();
-    }
-
-    public LocalDateTime toLocalDateTime() {
-        return this.odt.toLocalDateTime();
-    }
-
-    public ZonedDateTime toZonedDateTime() {
-        return this.odt.toZonedDateTime();
-    }
-
     public OffsetDateTime toOffsetDateTime() {
         return this.odt;
     }
+    
+    public Date toDate() {
+        return this.odt != null ? Date.from(this.odt.toInstant()) : null;
+    }
+
+    public LocalDate toLocalDate() {
+        return this.odt != null ? this.odt.toLocalDate() : null;
+    }
+
+    public LocalDateTime toLocalDateTime() {
+        return this.odt != null ? this.odt.toLocalDateTime() : null;
+    }
+
+    public ZonedDateTime toZonedDateTime() {
+        return this.odt != null ? this.odt.toZonedDateTime() : null;
+    }
 
     public Long toEpoch() {
-        return this.odt.toInstant().toEpochMilli();
+        return this.odt != null ? this.odt.toInstant().toEpochMilli() : null;
     }
 
     public String toString(){
@@ -126,8 +126,6 @@ public class DateRepresentation {
                 throw new IllegalArgumentException("Unsupported date representation type");
         }
     }
-    
-    
     
     protected DateTimeFormatter getFormatter(){
         return new DateTimeFormatterBuilder()
