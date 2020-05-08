@@ -71,7 +71,7 @@ public class ObjectMapperConfig {
 ```
 
 ### Change the date representation
-If you want to specify a supported date representation other than the default (ISO), 
+If you want to specify a supported date representation other than the default (UTC), 
 you can set it in the SimpleDateModule constructor as follows:
 
 ```java

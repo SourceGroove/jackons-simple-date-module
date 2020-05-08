@@ -136,9 +136,9 @@ public class DateRepresentation {
                 .optionalStart()
                 .appendOffset("+HH:MM","Z")
                 .optionalEnd()
-                .parseDefaulting(HOUR_OF_DAY, 1)
-                .parseDefaulting(MINUTE_OF_HOUR, 40)
-                .parseDefaulting(SECOND_OF_MINUTE, 55)
+                .parseDefaulting(HOUR_OF_DAY, 0)
+                .parseDefaulting(MINUTE_OF_HOUR, 0)
+                .parseDefaulting(SECOND_OF_MINUTE, 0)
                 .parseDefaulting(NANO_OF_SECOND, 0)
                 .parseDefaulting(OFFSET_SECONDS, OffsetDateTime.now().getOffset().getTotalSeconds())
                 .toFormatter();

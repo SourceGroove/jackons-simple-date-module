@@ -14,7 +14,7 @@ import java.util.Date;
 public class SimpleDateModule extends SimpleModule {
 
     public SimpleDateModule() {
-        addSerializers(DateRepresentationType.ISO);
+        addSerializers(DateRepresentationType.UTC);
     }
 
     public SimpleDateModule(DateRepresentationType type) {
