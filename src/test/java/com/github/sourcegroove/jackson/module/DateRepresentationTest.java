@@ -1,5 +1,6 @@
 package com.github.sourcegroove.jackson.module;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,11 +10,28 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
+@Slf4j
 public class DateRepresentationTest {
 
+    @Test
+    public void givenUtcStringWhenParseThenParsed(){
+        LocalDate localDate = new DateRepresentation(DateRepresentationType.UTC)
+                .of("2020-05-08T16:00:00Z")
+                .toLocalDate();
+        assertEquals(LocalDate.of(2020,5,8), localDate);
+    }
+    @Test
+    public void givenLocalDateWhenSerializeThenUtc(){
+        Object str = new DateRepresentation(DateRepresentationType.UTC)
+                .of(LocalDate.of(2020,5,8))
+                .serialize();
+        assertEquals("2020-05-08T00:00:00Z", str.toString());
+
+    }
     @Test()
     public void testNullPointers(){
         new DateRepresentation(DateRepresentationType.ISO).of("").toDate();
@@ -43,10 +61,10 @@ public class DateRepresentationTest {
     
     @Test()
     public void testParsePartialIsoFormats(){
-        assertNotNull(new DateRepresentation().of("2020-04-23"));
-        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29"));
-        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29.532-04:00"));
-        assertNotNull(new DateRepresentation().of("2020-04-23T11:56:29-04:00"));
+        assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23"));
+        assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23T11:56:29"));
+        assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23T11:56:29.532-04:00"));
+        assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23T11:56:29-04:00"));
     }
     
     @Test
@@ -56,12 +74,12 @@ public class DateRepresentationTest {
     }
     @Test()
     public void testIsoSerialize() {
-        System.out.println("Epoch: " + new DateRepresentation().of(new Date().getTime()).serialize());
-        System.out.println("Date: " + new DateRepresentation().of(new Date()).serialize());
-        System.out.println("LocalDate: " + new DateRepresentation().of(LocalDate.now()).serialize());
-        System.out.println("LocalDateTime: " + new DateRepresentation().of(LocalDateTime.now()).serialize());
-        System.out.println("ZonedDateTime: " + new DateRepresentation().of(ZonedDateTime.now()).serialize());
-        System.out.println("OffsetDateTime: " + new DateRepresentation().of(OffsetDateTime.now()).serialize());
+        System.out.println("Epoch: " + new DateRepresentation(DateRepresentationType.ISO).of(new Date().getTime()).serialize());
+        System.out.println("Date: " + new DateRepresentation(DateRepresentationType.ISO).of(new Date()).serialize());
+        System.out.println("LocalDate: " + new DateRepresentation(DateRepresentationType.ISO).of(LocalDate.now()).serialize());
+        System.out.println("LocalDateTime: " + new DateRepresentation(DateRepresentationType.ISO).of(LocalDateTime.now()).serialize());
+        System.out.println("ZonedDateTime: " + new DateRepresentation(DateRepresentationType.ISO).of(ZonedDateTime.now()).serialize());
+        System.out.println("OffsetDateTime: " + new DateRepresentation(DateRepresentationType.ISO).of(OffsetDateTime.now()).serialize());
     }
 
     @Test()
@@ -109,7 +127,7 @@ public class DateRepresentationTest {
 
     private void assertOfString(DateRepresentationType type, String str){
         DateRepresentation rep = new DateRepresentation(type).of(str);
-        assertNotNull(rep.getFormatter().parse(str));
+        assertNotNull(rep.getIsoFormatter().parse(str));
         assertNotNull(rep);
         assertNotNull(rep.toDate());
         assertNotNull(rep.toLocalDate());
