@@ -22,10 +22,7 @@ public class DateRepresentation {
     
     public DateRepresentation(DateRepresentationType type) {
         this.type = type;
-    }
-    public DateRepresentation(DateRepresentationType type, TimeZone timeZone) {
-        this.type = type;
-        this.configuredTimeZone = timeZone;
+        this.configuredTimeZone = type == DateRepresentationType.UTC ? TimeZone.getTimeZone("UTC") : null;
     }
 
     public DateRepresentation of(String string) {
