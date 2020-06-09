@@ -10,7 +10,7 @@
 
     <groupId>com.github.sourcegroove</groupId>
     <artifactId>jackson-simple-date-module</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>jackson-simple-date-module</name>
     <description>Layout driven spring batch item readers and writers</description>
