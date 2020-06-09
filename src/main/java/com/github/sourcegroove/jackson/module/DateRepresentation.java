@@ -19,7 +19,7 @@ public class DateRepresentation {
     private Instant instant;
     private TimeZone instantTimeZone;
     private TimeZone configuredTimeZone;
-    
+
     public DateRepresentation(DateRepresentationType type) {
         this.type = type;
         this.configuredTimeZone = type == DateRepresentationType.UTC ? TimeZone.getTimeZone("UTC") : null;
@@ -29,14 +29,20 @@ public class DateRepresentation {
         if (StringUtils.isBlank(string)) {
             return this;
         } else if (this.type == DateRepresentationType.EPOCH) {
-            return of(Long.valueOf(string));
+            return ofEpochString(string);
         } else if (this.type == DateRepresentationType.UTC) {
             return of(OffsetDateTime.parse(string, getIsoFormatter()));
         } else {
             return of(OffsetDateTime.parse(string, getIsoFormatter()));
         }
     }
-    
+    private DateRepresentation ofEpochString(String string){
+        if(StringUtils.isNumeric(string)){
+            return of(Long.valueOf(string));
+        } else {
+            return of(OffsetDateTime.parse(string, getIsoFormatter()));
+        }
+    }
     public DateRepresentation of(Long date) {
         this.instant = Instant.ofEpochMilli(date);
         return this;
@@ -53,8 +59,8 @@ public class DateRepresentation {
         this.instant = date.toInstant(offset);
         return this;
     }
-    
-    
+
+
     public DateRepresentation of(ZonedDateTime date) {
         this.instantTimeZone = TimeZone.getTimeZone(date.getZone());
         this.instant = Instant.from(date);
@@ -65,7 +71,7 @@ public class DateRepresentation {
         this.instant = Instant.from(date);
         return this;
     }
-    
+
     public LocalDate toLocalDate() {
         return getInstant() == null ? null : toLocalDateTime().toLocalDate();
     }
@@ -111,7 +117,7 @@ public class DateRepresentation {
                 return new IllegalArgumentException("Unsupported date representation type");
         }
     }
-    
+
     protected DateTimeFormatter getUtcFormatter(){
         return  DateTimeFormatter.ISO_INSTANT;
     }
@@ -132,22 +138,22 @@ public class DateRepresentation {
                 .parseDefaulting(OFFSET_SECONDS, defaultOffset)
                 .toFormatter();
     }
-    
+
     private TimeZone getTimeZone(){
-        
+
         if(this.configuredTimeZone != null){
             return this.configuredTimeZone;
-            
+
         } else if(this.instantTimeZone != null){
             return this.instantTimeZone;
-            
+
         } else if(this.type == DateRepresentationType.UTC){
             return TimeZone.getTimeZone("UTC");
-            
+
         } else {
             return TimeZone.getDefault();
         }
-        
+
     }
     private Instant getInstant(){
         return this.instant;

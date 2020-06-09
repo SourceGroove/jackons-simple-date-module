@@ -47,7 +47,7 @@ public class DateRepresentationTest {
         new DateRepresentation(DateRepresentationType.EPOCH).of("").toLocalDateTime();
         new DateRepresentation(DateRepresentationType.EPOCH).of("").toOffsetDateTime();
     }
-    
+
     @Test()
     public void testOfIsoString(){
         assertOfString(DateRepresentationType.ISO, "2020-04-23");
@@ -58,7 +58,7 @@ public class DateRepresentationTest {
         assertOfString(DateRepresentationType.ISO, "2020-04-23T11:56:29.3Z");
         assertOfString(DateRepresentationType.ISO, "2020-04-23T11:56:29.123Z");
     }
-    
+
     @Test()
     public void testParsePartialIsoFormats(){
         assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23"));
@@ -66,7 +66,7 @@ public class DateRepresentationTest {
         assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23T11:56:29.532-04:00"));
         assertNotNull(new DateRepresentation(DateRepresentationType.ISO).of("2020-04-23T11:56:29-04:00"));
     }
-    
+
     @Test
     public void testParsePartialUtcFormats(){
         assertNotNull(new DateRepresentation(DateRepresentationType.UTC).of("2020-04-23T15:58:29.053Z"));
@@ -113,7 +113,7 @@ public class DateRepresentationTest {
         System.out.println("OffsetDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(OffsetDateTime.now()).serialize());
         Assert.assertTrue(new DateRepresentation(DateRepresentationType.EPOCH).of(OffsetDateTime.now()).serialize() instanceof Long);
     }
-    
+
     @Test()
     public void testFromEpochString() {
         String str = "1587614400000";
@@ -123,6 +123,14 @@ public class DateRepresentationTest {
         System.out.println("LocalDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(str).toLocalDateTime());
         System.out.println("ZonedDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(str).toZonedDateTime());
         System.out.println("OffsetDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(str).toOffsetDateTime());
+
+        String utcString = "2020-04-23T15:58:29.053Z";
+        System.out.println("Epoch: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toEpoch());
+        System.out.println("Date: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toDate());
+        System.out.println("LocalDate: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toLocalDate());
+        System.out.println("LocalDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toLocalDateTime());
+        System.out.println("ZonedDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toZonedDateTime());
+        System.out.println("OffsetDateTime: " + new DateRepresentation(DateRepresentationType.EPOCH).of(utcString).toOffsetDateTime());
     }
 
     private void assertOfString(DateRepresentationType type, String str){
